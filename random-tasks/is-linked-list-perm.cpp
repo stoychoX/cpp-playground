@@ -1,6 +1,5 @@
 #include<iostream>
 #include<stack>
-#include<vector>
 #include<thread>
 #include<chrono>
 
