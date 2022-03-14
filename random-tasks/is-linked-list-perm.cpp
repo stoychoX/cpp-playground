@@ -1,5 +1,25 @@
 #include<iostream>
 #include<stack>
+#include<vector>
+#include<thread>
+#include<chrono>
+
+struct Timer
+{
+	std::chrono::time_point<std::chrono::steady_clock> start, end;
+	std::chrono::duration<float> duration;
+
+	Timer() {
+		start = std::chrono::steady_clock::now();
+	}
+
+	~Timer() {
+		end = std::chrono::steady_clock::now();
+		duration = end - start;
+		float output = duration.count() * 1.000f;
+		std::cout << "executed for: " << output << " ms" << std::endl;
+	}
+};
 
 struct linkedList {
 	int data;
@@ -47,7 +67,6 @@ bool checkIfPalindromeIterative(const linkedList* l) {
 	}
 
 	return true;
-
 }
 
 void freeLinkedList(linkedList* toDel) {
@@ -58,16 +77,35 @@ void freeLinkedList(linkedList* toDel) {
 	delete toDel;
 }
 
-int main() {
-	linkedList* pal = new linkedList(1,
-		new linkedList(2,
-			new linkedList(3,
-				new linkedList(4,
-					new linkedList(3, 
-						new linkedList(2,
-							new linkedList (1)))))));
+void printList(const linkedList* p) {
+	if (p == nullptr)
+		return;
+	std::cout << p->data << " ";
+	printList(p->next);
+}
 
-	std::cout << checkIfPalindromeIterative(pal);
+int main() {
+	linkedList* pal = new linkedList(0);
+	linkedList* curr = pal;
+
+	for (int i = 1; i < 5000; i++) {
+		curr->next = new linkedList(i);
+		curr = curr->next;
+	}
+
+	{
+		std::cout << "Check if big list is palindrome with iterative approach: " << std::endl;
+		Timer t;
+		std::cout << checkIfPalindromeIterative(pal);
+		std::cout << std::endl;
+	}
+
+	{
+		std::cout << "Check if big list is palindrome with recursive approach: " << std::endl;
+		Timer t;
+		std::cout << checkIfPalindrome(pal);
+		std::cout << std::endl;
+	}
 
 	freeLinkedList(pal);
 }
