@@ -77,13 +77,6 @@ void freeLinkedList(linkedList* toDel) {
 	delete toDel;
 }
 
-void printList(const linkedList* p) {
-	if (p == nullptr)
-		return;
-	std::cout << p->data << " ";
-	printList(p->next);
-}
-
 int main() {
 	linkedList* pal = new linkedList(0);
 	linkedList* curr = pal;
