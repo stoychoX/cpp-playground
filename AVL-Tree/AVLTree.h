@@ -1,4 +1,4 @@
-﻿#ifndef AVL_TREE_HEADER
+#ifndef AVL_TREE_HEADER
 #define AVL_TREE_HEADER
 #include<cassert>
 
@@ -84,6 +84,7 @@ private:
 	};
 
 	Node* root;
+	int nodesCount;
 
 	int pushRec(int elem, Node*& r);
 
@@ -95,10 +96,47 @@ private:
 
 	void free();
 public:
+	class iterator {
+	private:
+		Node* currNode;
 
-	AVLTree() : root(nullptr) {}
+		iterator(Node* r) : currNode(r) {}
+	public:
+		iterator() = delete;
+		iterator(const iterator&) = default;
 
-	AVLTree(int data) : root(new Node(data)) {}
+		iterator(const AVLTree& tree) : currNode(tree.root) {}
+
+		iterator operator++() {
+			if (isValid()) {
+				return iterator(currNode->right);
+			}
+			return iterator(currNode);
+		}
+
+		int currData() const {
+			return currNode->data;
+		}
+
+		int operator*() {
+			return currNode->data;
+		}
+
+		iterator operator--() {
+			if (isValid()) {
+				return iterator(currNode->left);
+			}
+			return iterator(currNode);
+		}
+
+		bool isValid() const {
+			return currNode != nullptr;
+		}
+	};
+
+	AVLTree() : root(nullptr), nodesCount(0) {}
+
+	AVLTree(int data) : root(new Node(data)), nodesCount(1) {}
 
 	AVLTree(const AVLTree& other) {
 		copy(other);
@@ -112,7 +150,13 @@ public:
 
 	bool exists(int elem) const;
 
+	int getNodesCount() const;
+
+	iterator begin() const;
+
 	void push(int elem);
+
+	int getHeight() const;
 
 	~AVLTree();
 };
