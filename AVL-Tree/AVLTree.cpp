@@ -1,4 +1,4 @@
-﻿#include "AVLTree.h"
+#include "AVLTree.h"
 
 //-1 Провалено вмъкване
 // 1 Вмъкването е ок
@@ -89,6 +89,7 @@ void AVLTree::freeRec(Node* r) {
 
 void AVLTree::copy(const AVLTree& other) {
 	this->root = Node::copyDynamic(other.root);
+	nodesCount = other.nodesCount;
 }
 
 bool AVLTree::existRec(int elem, const Node* r) const {
@@ -109,6 +110,7 @@ void AVLTree::free() {
 AVLTree::AVLTree(AVLTree&& other) {
 	this->root = other.root;
 	other.root = nullptr;
+	nodesCount = other.nodesCount;
 }
 
 AVLTree& AVLTree::operator=(const AVLTree& other) {
@@ -126,6 +128,7 @@ AVLTree& AVLTree::operator=(AVLTree&& other) {
 
 		this->root = other.root;
 		other.root = nullptr;
+		nodesCount = other.nodesCount;
 	}
 	return *this;
 }
@@ -134,8 +137,21 @@ bool AVLTree::exists(int elem) const {
 	return existRec(elem, root);
 }
 
+int AVLTree::getNodesCount() const {
+	return nodesCount;
+}
+
+AVLTree::iterator AVLTree::begin() const {
+	return AVLTree::iterator(*this);
+}
+
 void AVLTree::push(int elem) {
-	pushRec(elem, root);
+	if (pushRec(elem, root) != -1)
+		++nodesCount;
+}
+
+int AVLTree::getHeight() const {
+	return root->height;
 }
 
 AVLTree::~AVLTree() {
