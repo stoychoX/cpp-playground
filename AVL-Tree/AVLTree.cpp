@@ -134,10 +134,6 @@ bool AVLTree::exists(int elem) const {
 	return existRec(elem, root);
 }
 
-AVLTree::iterator AVLTree::begin() const {
-	return AVLTree::iterator(*this);
-}
-
 void AVLTree::push(int elem) {
 	pushRec(elem, root);
 }
