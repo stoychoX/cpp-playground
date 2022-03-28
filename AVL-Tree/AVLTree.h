@@ -95,7 +95,6 @@ private:
 
 	void free();
 public:
-	#include "iterator.inl"
 
 	AVLTree() : root(nullptr) {}
 
@@ -112,8 +111,6 @@ public:
 	AVLTree& operator=(AVLTree&& other);
 
 	bool exists(int elem) const;
-
-	iterator begin() const;
 
 	void push(int elem);
 
