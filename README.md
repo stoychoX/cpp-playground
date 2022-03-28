@@ -1,2 +1,2 @@
 # cpp-playground
-Small code snippets I find cool/useful.
+Small code snippets, written by me, which I find cool/useful.
