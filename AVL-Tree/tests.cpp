@@ -15,14 +15,25 @@ bool isBST(AVLTree::iterator it, int max = INT_MAX, int min = INT_MIN) {
 }
 
 bool correctHeight(const AVLTree& t) {
-	int lowerBound = log2(t.getNodesCount());
-	int upperBound = 2 * log2(t.getNodesCount()) + 2;
+	double lowerBound = log2(t.getNodesCount());
+	double upperBound = 2 *log2(t.getNodesCount() + 1) - 1;
 
 	return lowerBound <= t.getHeight() && t.getHeight() <= upperBound;
 }
 
 bool isAVL(const AVLTree& t) {
 	return isBST(t.begin()) && correctHeight(t);
+}
+
+TEST_CASE("test on big tree") {
+	int nodesCount = 1000000;
+
+	AVLTree t;
+
+	for (int i = 0; i < nodesCount; i++)
+		t.push((rand() % (2 * nodesCount)) + 1);
+
+	CHECK(isAVL(t));
 }
 
 TEST_CASE("test BST property and correct heigth on 100 random trees") {
@@ -34,6 +45,13 @@ TEST_CASE("test BST property and correct heigth on 100 random trees") {
 			t.push(rand() % 10000);
 		CHECK(isAVL(t));
 	}
+}
+
+TEST_CASE("check on one element tree") {
+	AVLTree t;
+	t.push(1);
+
+	CHECK(isAVL(t));
 }
 
 TEST_CASE("check if find works") {
