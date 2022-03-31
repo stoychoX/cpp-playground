@@ -16,8 +16,8 @@ int AVLTree::pushRec(int elem, Node*& r) {
 	else if (elem < r->data) {
 		res = pushRec(elem, r->left);
 
-		if (res == -1)
-			return -1;
+		if (res != 1)
+			return res;
 
 		int balance = 0;
 		int balanceRight = 0;
@@ -46,8 +46,8 @@ int AVLTree::pushRec(int elem, Node*& r) {
 	}
 	else {
 		res = pushRec(elem, r->right);
-		if (res == -1)
-			return -1;
+		if (res != 1)
+			return res;
 
 		int balance = 0;
 		int balanceLeft = 0;
