@@ -92,7 +92,15 @@ private:
 
 	void copy(const AVLTree& other);
 
+	int removeRec(Node*& r, int elem);
+
+	Node* findMaxRight(Node* r) const;
+
 	bool existRec(int elem, const Node* r) const;
+
+	int searchForLeftDisbalance(Node*& r);
+
+	int searchForRightDisbalance(Node*& r);
 
 	void free();
 public:
@@ -151,6 +159,8 @@ public:
 	bool exists(int elem) const;
 
 	int getNodesCount() const;
+
+	int removeElement(int elem);
 
 	iterator begin() const;
 

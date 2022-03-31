@@ -3,6 +3,9 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include"doctest.h"
 #include<cmath>
+#include <random>       // std::default_random_engine
+#include <chrono>       // std::chrono::system_clock
+#include<algorithm>
 
 bool isBST(AVLTree::iterator it, int max = INT_MAX, int min = INT_MIN) {
 	if (!it.isValid())
@@ -76,4 +79,66 @@ TEST_CASE("check if nodes count is correct") {
 		t.push(i);
 
 	CHECK(t.getNodesCount() == len);
+}
+
+TEST_CASE("check removing one element") {
+	AVLTree t;
+	for (int i = 0; i < 10; i++)
+		t.push(i);
+
+	CHECK(t.exists(1));
+
+	t.removeElement(1);
+
+	CHECK(t.exists(1) == false);
+}
+
+
+TEST_CASE("check avl property after removing element with rotation") {
+	AVLTree t;
+
+	for (int i = 1; i < 10; i++)
+		t.push(i);
+	
+	t.removeElement(6);
+
+	CHECK(isAVL(t));
+}
+
+TEST_CASE("check avl property after removing a lot of elements") {
+	AVLTree t;
+
+	for (int i = 0; i < 100; i++)
+		t.push(i);
+
+	for (int i = 0; i < 100; i+=3) {
+		t.removeElement(i);
+		CHECK(isAVL(t));
+	}
+}
+
+TEST_CASE("check removing elements for big tree") {
+	AVLTree t;
+
+	int length = 1000;
+
+	std::vector<int> v;
+
+	v.reserve(length);
+
+	for (int i = 0; i < length; i++)
+		v.emplace_back(i);
+
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+
+	std::shuffle(v.begin(), v.end(), std::default_random_engine(seed));
+
+	for (int i = 0; i < length; i++)
+		t.push(v[i]);
+
+	for (int i = 0; i < length; i+=5) {
+		t.removeElement(v[i]);
+		CHECK(isAVL(t));
+		CHECK(t.exists(v[i]) == false);
+	}
 }

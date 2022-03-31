@@ -19,59 +19,17 @@ int AVLTree::pushRec(int elem, Node*& r) {
 		if (res != 1)
 			return res;
 
-		int balance = 0;
-		int balanceRight = 0;
-
-		balance += r->right ? r->right->height : 0;
-		balance -= r->left ? r->left->height : 0;
-
-		if (r->left) {
-			balanceRight += r->left->right ? r->left->right->height : 0;
-			balanceRight -= r->left->left ? r->left->left->height : 0;
-		}
-
-		if (balance == -2) {
-			if (balanceRight == 1) {
-				AVLTree::Node::rotateLeft(r->left);
-			}
-
-
-			AVLTree::Node::rotateRight(r);
-
-			if (r->right)
-				r->right->height--;
-
+		if (searchForLeftDisbalance(r) == 1)
 			return 2;
-		}
 	}
 	else {
 		res = pushRec(elem, r->right);
+
 		if (res != 1)
 			return res;
 
-		int balance = 0;
-		int balanceLeft = 0;
-
-		balance += r->right ? r->right->height : 0;
-		balance -= r->left ? r->left->height : 0;
-
-		if (r->right) {
-			balanceLeft += r->right->right ? r->right->right->height : 0;
-			balanceLeft -= r->right->left ? r->right->left->height : 0;
-		}
-
-		if (balance == 2) {
-			if (balanceLeft == -1) {
-				AVLTree::Node::rotateRight(r->right);
-			}
-
-			AVLTree::Node::rotateLeft(r);
-
-			if (r->left)
-				r->left->height--;
-
+		if (searchForRightDisbalance(r) == 1)
 			return 2;
-		}
 	}
 
 	r->height = Node::max(Node::getHeight(r->left), Node::getHeight(r->right)) + 1;	// Увеличаваме височината само ако не сме направили ротация
@@ -92,6 +50,81 @@ void AVLTree::copy(const AVLTree& other) {
 	nodesCount = other.nodesCount;
 }
 
+int AVLTree::removeRec(Node*& r, int elem) {
+	if (r == nullptr)
+		return -1;
+
+	int res = 1;
+
+	if (r->data == elem) {
+		bool hasZeroChildren = !r->left && !r->right;
+
+		bool hasOneChildren = (bool)(r->left) ^ (bool)(r->right);
+
+		if (hasZeroChildren) {
+			delete r;
+			r = nullptr;
+			return 1;
+		}
+		else if (hasOneChildren) {
+			r->data = r->left ? r->left->data : r->right->data;
+
+			if (r->left) {
+				delete r->left;
+				r->left = nullptr;
+			}
+			else {
+				delete r->right;
+				r->right = nullptr;
+			}
+
+			r->height = 1;
+
+			return 1;
+		}
+		else {
+			Node* maxRight = findMaxRight(r->left);
+			int temp = r->data;
+			r->data = maxRight->data;
+			maxRight->data = temp;
+
+			removeRec(r->left, elem);
+
+			if(searchForLeftDisbalance(r) == 1)
+				return 2;
+		}
+	}
+	else if (r->data > elem) {
+		res = removeRec(r->left, elem);
+
+		if (res != 1)
+			return res;
+
+		if(searchForLeftDisbalance(r) == 1)
+			return 2;
+	}
+	else {
+		res = removeRec(r->right, elem);
+
+		if (res != 1)
+			return res;
+
+		if(searchForRightDisbalance(r) == 1)
+			return 2;
+	}
+
+	r->height = Node::max(Node::getHeight(r->left), Node::getHeight(r->right)) + 1;	
+	return res;
+}
+
+AVLTree::Node* AVLTree::findMaxRight(Node* r) const {
+	assert(r != nullptr);
+
+	if (!r->right)
+		return r;
+	return findMaxRight(r->right);
+}
+
 bool AVLTree::existRec(int elem, const Node* r) const {
 	if (r == nullptr)
 		return false;
@@ -101,6 +134,62 @@ bool AVLTree::existRec(int elem, const Node* r) const {
 		return existRec(elem, r->right);
 	else
 		return existRec(elem, r->left);
+}
+
+int AVLTree::searchForLeftDisbalance(Node*& r) {
+	int balance = 0;
+	int balanceRight = 0;
+
+	balance += r->right ? r->right->height : 0;
+	balance -= r->left ? r->left->height : 0;
+
+	if (r->left) {
+		balanceRight += r->left->right ? r->left->right->height : 0;
+		balanceRight -= r->left->left ? r->left->left->height : 0;
+	}
+
+	if (balance == -2) {
+		if (balanceRight == 1) {
+			AVLTree::Node::rotateLeft(r->left);
+		}
+
+		AVLTree::Node::rotateRight(r);
+
+		if (r->right)
+			r->right->height--;
+
+		return 1;
+	}
+
+	return 0;
+}
+
+int AVLTree::searchForRightDisbalance(Node*& r) {
+	int balance = 0;
+	int balanceLeft = 0;
+
+	balance += r->right ? r->right->height : 0;
+	balance -= r->left ? r->left->height : 0;
+
+	if (r->right) {
+		balanceLeft += r->right->right ? r->right->right->height : 0;
+		balanceLeft -= r->right->left ? r->right->left->height : 0;
+	}
+
+	if (balance == 2) {
+		if (balanceLeft == -1) {
+			AVLTree::Node::rotateRight(r->right);
+		}
+
+		AVLTree::Node::rotateLeft(r);
+
+		if (r->left)
+			r->left->height--;
+
+		return 1;
+	}
+
+	return 0;
 }
 
 void AVLTree::free() {
@@ -139,6 +228,15 @@ bool AVLTree::exists(int elem) const {
 
 int AVLTree::getNodesCount() const {
 	return nodesCount;
+}
+
+int AVLTree::removeElement(int elem) {
+	int res = removeRec(root, elem);
+
+	if (res != -1)
+		nodesCount--;
+
+	return res;
 }
 
 AVLTree::iterator AVLTree::begin() const {
