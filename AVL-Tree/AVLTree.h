@@ -94,13 +94,13 @@ private:
 
 	int removeRec(Node*& r, int elem);
 
-	Node* findMaxRight(Node* r) const;
+	Node* findMinLeft(Node* r) const;
 
 	bool existRec(int elem, const Node* r) const;
 
-	int searchForLeftDisbalance(Node*& r);
-
 	int searchForRightDisbalance(Node*& r);
+
+	int searchForLeftDisbalance(Node*& r);
 
 	void free();
 public:
@@ -115,22 +115,29 @@ public:
 
 		iterator(const AVLTree& tree) : currNode(tree.root) {}
 
-		iterator operator++() {
+		iterator operator++() const {
 			if (isValid()) {
 				return iterator(currNode->right);
 			}
 			return iterator(currNode);
 		}
 
+		int getHeight() const {
+			if (!currNode)
+				return 0;
+
+			return currNode->height;
+		}
+
 		int currData() const {
 			return currNode->data;
 		}
 
-		int operator*() {
+		int operator*() const {
 			return currNode->data;
 		}
 
-		iterator operator--() {
+		iterator operator--() const {
 			if (isValid()) {
 				return iterator(currNode->left);
 			}
@@ -167,6 +174,8 @@ public:
 	void push(int elem);
 
 	int getHeight() const;
+
+	bool isEmpty() const;
 
 	~AVLTree();
 };

@@ -57,16 +57,12 @@ int AVLTree::removeRec(Node*& r, int elem) {
 	int res = 1;
 
 	if (r->data == elem) {
-		bool hasZeroChildren = !r->left && !r->right;
-
-		bool hasOneChildren = (bool)(r->left) ^ (bool)(r->right);
-
-		if (hasZeroChildren) {
+		if (!r->left && !r->right) {
 			delete r;
 			r = nullptr;
 			return 1;
 		}
-		else if (hasOneChildren) {
+		else if ((r->left && !r->right) || (!r->left && r->right)) {
 			r->data = r->left ? r->left->data : r->right->data;
 
 			if (r->left) {
@@ -84,33 +80,23 @@ int AVLTree::removeRec(Node*& r, int elem) {
 		}
 		else {
 			r->data = findMinLeft(r->right)->data;
-			removeRec(r->right, r->data);
-
-			r->height = Node::max(Node::getHeight(r->left), Node::getHeight(r->right)) + 1;
+			res = removeRec(r->right, r->data);
 		}
 	}
 	else if (r->data > elem) {
 		res = removeRec(r->left, elem);
-
-		if (res != 1)
-			return res;
-		
-		r->height = Node::max(Node::getHeight(r->left), Node::getHeight(r->right)) + 1;
 	}
 	else {
 		res = removeRec(r->right, elem);
-
-		if (res != 1)
-			return res;
-
-		if (searchForRightDisbalance(r) == 1)
-			return 2;
-
-		r->height = Node::max(Node::getHeight(r->left), Node::getHeight(r->right)) + 1;
 	}
+	
+	if (res != 1)
+		return res;
+	
+	searchForRightDisbalance(r);
+	searchForLeftDisbalance(r);
 
-	if (searchForLeftDisbalance(r) || searchForRightDisbalance(r))
-		return 2;
+	r->height = Node::max(Node::getHeight(r->left), Node::getHeight(r->right)) + 1;
 
 	return res;
 }
