@@ -7,25 +7,13 @@
 #include <chrono>       // std::chrono::system_clock
 #include<algorithm>
 
-bool isBST(AVLTree::iterator it, int max = INT_MAX, int min = INT_MIN) {
-	if (!it.isValid())
+bool isAVL(const AVLTree::iterator& t) {
+	if (!t.isValid())
 		return true;
+	int lHeight = (--t).getHeight();
+	int rHeight = (++t).getHeight();
 
-	if (*it < min || *it > max)
-		return false;
-
-	return isBST(++it, max, it.currData()) && isBST(--it, it.currData(), min);
-}
-
-bool correctHeight(const AVLTree& t) {
-	double lowerBound = log2(t.getNodesCount());
-	double upperBound = 2 *log2(t.getNodesCount() + 1) - 1;
-
-	return lowerBound <= t.getHeight() && t.getHeight() <= upperBound;
-}
-
-bool isAVL(const AVLTree& t) {
-	return isBST(t.begin()) && correctHeight(t);
+	return std::abs(rHeight - lHeight) < 2 && isAVL(++t) && isAVL(--t);
 }
 
 TEST_CASE("test on big tree") {
@@ -36,7 +24,7 @@ TEST_CASE("test on big tree") {
 	for (int i = 0; i < nodesCount; i++)
 		t.push((rand() % (2 * nodesCount)) + 1);
 
-	CHECK(isAVL(t));
+	CHECK(isAVL(t.begin()));
 }
 
 TEST_CASE("test BST property and correct heigth on 100 random trees") {
@@ -46,7 +34,7 @@ TEST_CASE("test BST property and correct heigth on 100 random trees") {
 
 		for (int i = 0; i < randNumberOfNodes; i++)
 			t.push(rand() % 10000);
-		CHECK(isAVL(t));
+		CHECK(isAVL(t.begin()));
 	}
 }
 
@@ -54,12 +42,12 @@ TEST_CASE("check on one element tree") {
 	AVLTree t;
 	t.push(1);
 
-	CHECK(isAVL(t));
+	CHECK(isAVL(t.begin()));
 }
 
 TEST_CASE("check if find works") {
 	AVLTree t;
-	
+
 	int toFild = rand() % 100 + 1;
 
 	for (int i = 0; i < 100; i++)
@@ -93,16 +81,15 @@ TEST_CASE("check removing one element") {
 	CHECK(t.exists(1) == false);
 }
 
-
 TEST_CASE("check avl property after removing element with rotation") {
 	AVLTree t;
 
 	for (int i = 1; i < 10; i++)
 		t.push(i);
-	
+
 	t.removeElement(6);
 
-	CHECK(isAVL(t));
+	CHECK(isAVL(t.begin()));
 }
 
 TEST_CASE("check avl property after removing a lot of elements") {
@@ -111,16 +98,16 @@ TEST_CASE("check avl property after removing a lot of elements") {
 	for (int i = 0; i < 100; i++)
 		t.push(i);
 
-	for (int i = 0; i < 100; i+=3) {
+	for (int i = 0; i < 100; i += 3) {
 		t.removeElement(i);
-		CHECK(isAVL(t));
+		CHECK(isAVL(t.begin()));
 	}
 }
 
-TEST_CASE("check removing elements for big tree") {
+TEST_CASE("check nodes count") {
 	AVLTree t;
 
-	int length = 1000;
+	int length = 200;
 
 	std::vector<int> v;
 
@@ -136,9 +123,12 @@ TEST_CASE("check removing elements for big tree") {
 	for (int i = 0; i < length; i++)
 		t.push(v[i]);
 
-	for (int i = 0; i < length; i+=5) {
+	int cnt = length;
+
+	CHECK(t.getNodesCount() == length);
+
+	for (int i = 0; i < length; i++) {
 		t.removeElement(v[i]);
-		CHECK(isAVL(t));
-		CHECK(t.exists(v[i]) == false);
+		CHECK(isAVL(t.begin()));
 	}
 }
