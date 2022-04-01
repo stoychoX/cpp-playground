@@ -83,15 +83,10 @@ int AVLTree::removeRec(Node*& r, int elem) {
 			return 1;
 		}
 		else {
-			Node* maxRight = findMaxRight(r->left);
-			int temp = r->data;
-			r->data = maxRight->data;
-			maxRight->data = temp;
+			r->data = findMinLeft(r->right)->data;
+			removeRec(r->right, r->data);
 
-			removeRec(r->left, elem);
-
-			if(searchForLeftDisbalance(r) == 1)
-				return 2;
+			r->height = Node::max(Node::getHeight(r->left), Node::getHeight(r->right)) + 1;
 		}
 	}
 	else if (r->data > elem) {
@@ -99,9 +94,8 @@ int AVLTree::removeRec(Node*& r, int elem) {
 
 		if (res != 1)
 			return res;
-
-		if(searchForLeftDisbalance(r) == 1)
-			return 2;
+		
+		r->height = Node::max(Node::getHeight(r->left), Node::getHeight(r->right)) + 1;
 	}
 	else {
 		res = removeRec(r->right, elem);
@@ -109,20 +103,24 @@ int AVLTree::removeRec(Node*& r, int elem) {
 		if (res != 1)
 			return res;
 
-		if(searchForRightDisbalance(r) == 1)
+		if (searchForRightDisbalance(r) == 1)
 			return 2;
+
+		r->height = Node::max(Node::getHeight(r->left), Node::getHeight(r->right)) + 1;
 	}
 
-	r->height = Node::max(Node::getHeight(r->left), Node::getHeight(r->right)) + 1;	
+	if (searchForLeftDisbalance(r) || searchForRightDisbalance(r))
+		return 2;
+
 	return res;
 }
 
-AVLTree::Node* AVLTree::findMaxRight(Node* r) const {
+AVLTree::Node* AVLTree::findMinLeft(Node* r) const {
 	assert(r != nullptr);
 
-	if (!r->right)
+	if (!r->left)
 		return r;
-	return findMaxRight(r->right);
+	return findMinLeft(r->left);
 }
 
 bool AVLTree::existRec(int elem, const Node* r) const {
@@ -249,7 +247,11 @@ void AVLTree::push(int elem) {
 }
 
 int AVLTree::getHeight() const {
-	return root->height;
+	return root ? root->height : 0;
+}
+
+bool AVLTree::isEmpty() const {
+	return (root == nullptr);
 }
 
 AVLTree::~AVLTree() {
