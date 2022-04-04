@@ -2,7 +2,7 @@
 #include <vector>
 #include <fstream>
 
-void printTable(const int** table, int x, int y, std::ofstream& outFile = std::cout) {
+void printTable(int** table, int x, int y, std::ofstream& outFile) {
 	for (int i = 0; i < x; i++) {
 		for (int j = 0; j < y; j++)
 			outFile << table[i][j] << ',';
