@@ -93,8 +93,8 @@ int AVLTree::removeRec(Node*& r, int elem) {
 	if (res != 1)
 		return res;
 	
-	searchForRightDisbalance(r);
 	searchForLeftDisbalance(r);
+	searchForRightDisbalance(r);
 
 	r->height = Node::max(Node::getHeight(r->left), Node::getHeight(r->right)) + 1;
 
@@ -139,8 +139,9 @@ int AVLTree::searchForLeftDisbalance(Node*& r) {
 
 		AVLTree::Node::rotateRight(r);
 
-		if (r->right)
-			r->right->height--;
+		if (r->right) {
+			r->right->height = Node::max(Node::getHeight(r->right->left), Node::getHeight(r->right->right)) + 1;
+		}
 
 		return 1;
 	}
@@ -167,8 +168,10 @@ int AVLTree::searchForRightDisbalance(Node*& r) {
 
 		AVLTree::Node::rotateLeft(r);
 
-		if (r->left)
-			r->left->height--;
+		if (r->left) {
+			r->left->height = Node::max(Node::getHeight(r->left->left), Node::getHeight(r->left->right)) + 1;
+			//r->left->height--;
+		}
 
 		return 1;
 	}

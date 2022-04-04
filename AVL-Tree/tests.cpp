@@ -7,6 +7,16 @@
 #include <chrono>       // std::chrono::system_clock
 #include<algorithm>
 
+bool correctHeight(const AVLTree& t) {
+	if (t.getHeight() == 0)
+		return true;
+
+	double lowerBound = log2(t.getNodesCount());
+	double upperBound = 2 * log2(t.getNodesCount() + 1) - 1;
+
+	return lowerBound <= t.getHeight() && t.getHeight() <= upperBound;
+}
+
 bool isAVL(const AVLTree::iterator& t) {
 	if (!t.isValid())
 		return true;
@@ -25,6 +35,7 @@ TEST_CASE("test on big tree") {
 		t.push((rand() % (2 * nodesCount)) + 1);
 
 	CHECK(isAVL(t.begin()));
+	CHECK(correctHeight(t));
 }
 
 TEST_CASE("test BST property and correct heigth on 100 random trees") {
@@ -35,6 +46,7 @@ TEST_CASE("test BST property and correct heigth on 100 random trees") {
 		for (int i = 0; i < randNumberOfNodes; i++)
 			t.push(rand() % 10000);
 		CHECK(isAVL(t.begin()));
+		CHECK(correctHeight(t));
 	}
 }
 
@@ -43,6 +55,7 @@ TEST_CASE("check on one element tree") {
 	t.push(1);
 
 	CHECK(isAVL(t.begin()));
+	CHECK(correctHeight(t));
 }
 
 TEST_CASE("check if find works") {
@@ -57,6 +70,7 @@ TEST_CASE("check if find works") {
 
 	CHECK(t.exists(toFild));
 	CHECK(t.exists(0) == false);
+	CHECK(correctHeight(t));
 }
 
 TEST_CASE("check if nodes count is correct") {
@@ -67,6 +81,7 @@ TEST_CASE("check if nodes count is correct") {
 		t.push(i);
 
 	CHECK(t.getNodesCount() == len);
+	CHECK(correctHeight(t));
 }
 
 TEST_CASE("check removing one element") {
@@ -90,6 +105,7 @@ TEST_CASE("check avl property after removing element with rotation") {
 	t.removeElement(6);
 
 	CHECK(isAVL(t.begin()));
+	CHECK(correctHeight(t));
 }
 
 TEST_CASE("check avl property after removing a lot of elements") {
@@ -101,13 +117,14 @@ TEST_CASE("check avl property after removing a lot of elements") {
 	for (int i = 0; i < 100; i += 3) {
 		t.removeElement(i);
 		CHECK(isAVL(t.begin()));
+		CHECK(correctHeight(t));
 	}
 }
 
 TEST_CASE("check nodes count") {
 	AVLTree t;
 
-	int length = 200;
+	int length = 10000;
 
 	std::vector<int> v;
 
@@ -129,6 +146,10 @@ TEST_CASE("check nodes count") {
 
 	for (int i = 0; i < length; i++) {
 		t.removeElement(v[i]);
+
 		CHECK(isAVL(t.begin()));
+		CHECK(correctHeight(t));
+		CHECK(--cnt == t.getNodesCount());
 	}
+
 }
