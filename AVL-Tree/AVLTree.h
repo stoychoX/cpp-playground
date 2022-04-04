@@ -171,7 +171,7 @@ public:
 
 	iterator begin() const;
 
-	void push(int elem);
+	int push(int elem);
 
 	int getHeight() const;
 

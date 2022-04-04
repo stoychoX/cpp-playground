@@ -230,9 +230,13 @@ AVLTree::iterator AVLTree::begin() const {
 	return AVLTree::iterator(*this);
 }
 
-void AVLTree::push(int elem) {
-	if (pushRec(elem, root) != -1)
+int AVLTree::push(int elem) {
+	int res = pushRec(elem, root);
+
+	if (res != -1)
 		++nodesCount;
+
+	return res;
 }
 
 int AVLTree::getHeight() const {
