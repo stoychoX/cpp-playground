@@ -14,3 +14,21 @@ double sqrtNewton(double number, double l = 0.0001) {
 
     return root;
 }
+
+
+
+double sqrtNewtonTwo(double number, int l = 100) {
+	double result = 1;
+	double temp = 1;
+
+	for (int i = 0; i < l; i++) {
+		temp = 0.5 * (result + number / result);
+
+		if (temp == result && result != 1)
+			return result;
+
+		result = temp;
+	}
+
+	return result;
+}
