@@ -5,7 +5,7 @@ using matrix = std::vector<std::vector<int>>;
 
 matrix findCycleDecomposition(const std::vector<int>& permutation) {
 	matrix toReturn;
-	const int length = permutation.size();
+	const size_t length = permutation.size();
 
 	std::vector<bool> visited(length, false);
   
@@ -15,8 +15,8 @@ matrix findCycleDecomposition(const std::vector<int>& permutation) {
 			visited[i] = true;
 			if (permutation[i] != i + 1) {
 				toReturn.push_back(std::vector<int>(1, i + 1));
-				const unsigned idx = toReturn.size() - 1;
-				int k = permutation[i];
+				const size_t idx = toReturn.size() - 1;
+				size_t k = permutation[i];
 
 				while (k != i + 1) {
 					visited[k - 1] = true;
