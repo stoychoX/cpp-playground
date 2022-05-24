@@ -12,9 +12,9 @@ adjacencyList TC(const adjacencyList& graph) {
 
 	vector<int> startEdges;
 
-	vector<bool> visited(graph.size());
-
 	for (size_t i = 0; i < graph.size(); i++) {
+		vector<bool> visited(graph.size());
+		
 		startEdges.push_back(i);
 
 		for (int vertex : graph[i])
@@ -44,6 +44,4 @@ void mark(const adjacencyList& graph, vector<int>& startEdges, int iterateEdge, 
 		startEdges.push_back(iterateEdge);
 		mark(graph, startEdges, adjacentVertex, toReturn, visited);
 	}
-
-	visited[iterateEdge] = false;
 }
