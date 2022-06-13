@@ -4,7 +4,7 @@
 // Input: boolean matrix
 // Output: face of the biggest square containing only 1s
 
-int faceOfBiggestRectangle(const std::vector<std::vector<bool>>& v) {
+int faceOfBiggestSquare(const std::vector<std::vector<bool>>& v) {
 	if (v.empty())
 		return 0;
 
@@ -57,7 +57,7 @@ int main() {
 	}; // ans: 1
 
 	std::cout << 
-    faceOfBiggestRectangle(example) << std::endl <<
-		faceOfBiggestRectangle(exampleTwo) << std::endl <<
-		faceOfBiggestRectangle(exampleThree);
+    faceOfBiggestSquare(example) << std::endl <<
+		faceOfBiggestSquare(exampleTwo) << std::endl <<
+		faceOfBiggestSquare(exampleThree);
 }
