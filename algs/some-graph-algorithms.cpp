@@ -37,45 +37,17 @@ class WeightedGraph {
 	std::vector<std::list<WeightedEdge>> data;
 	size_t graphSize;
 
-	void BFS_rec(Vertex from, std::vector<bool>& visited, void (*visit)(Vertex&) = [](Vertex& v) {}) const {
-		std::queue<Vertex> q;
+	void BFS_rec(Vertex from, std::vector<bool>& visited, void (*visit)(Vertex&) = [](Vertex& v) {}) const;
 
-		q.push(from);
-
-		while (!q.empty()) {
-			Vertex curr = q.front();
-			q.pop();
-
-			if (!visited[curr]) {
-				for (const WeightedEdge& e : data[curr])
-					q.push(e.edge.to);
-				visit(curr);
-			}
-
-			visited[curr] = true;
-		}
-	}
+	bool containCycleRec(Vertex v, std::vector<bool>& stack, std::vector<bool>& visited) const;
 public:
-	WeightedGraph(size_t n) {
-		graphSize = n;
-		data = std::vector<std::list<WeightedEdge>>(n, std::list<WeightedEdge>());
-	}
+	WeightedGraph(size_t n);
 
-	void addDirectedEdge(Vertex from, Vertex to, int w = 0) {
-		if (from > graphSize || to > graphSize)
-			return;
+	void addDirectedEdge(Vertex from, Vertex to, int w = 0);
 
-		data[from].push_back({ from, to, w });
-	}
+	void addEdge(Vertex from, Vertex to, int w = 0);
 
-	void addEdge(Vertex from, Vertex to, int w = 0) {
-		addDirectedEdge(from, to, w);
-		addDirectedEdge(to, from, w);
-	}
-
-	size_t size() const {
-		return graphSize;
-	}
+	size_t size() const;
 	
 	std::optional<std::vector<int>> bellmanFord(Vertex from) const;
 	std::vector<std::vector<int>> floydWarshall() const;
@@ -88,52 +60,65 @@ public:
 	void bellmanFordDemo() const;
 	void dijkstraDemo() const;
 
-	void BFS(Vertex from, void (*visit)(Vertex& v) = [](Vertex& v) {}) const {
-		std::vector<bool> visited(graphSize, false);
+	void BFS(Vertex from, void (*visit)(Vertex& v) = [](Vertex& v) {}) const;
+	void BFS(void (*visit)(Vertex& v) = [](Vertex& v) {}) const;
 
-		std::queue<Vertex> q;
-		q.push(from);
+	void DFS(Vertex start, void (*visit)(Vertex& v) = [](Vertex& v) {}) const;
 
-		while (!q.empty()) {
-			Vertex curr = q.front();
-			q.pop();
-
-			if (!visited[curr]) {
-				for (const WeightedEdge& e : data[curr])
-					q.push(e.edge.to);
-				visit(curr);
-			}
-			
-			visited[curr] = true;
-		}
-	}
-	void BFS(void (*visit)(Vertex& v) = [](Vertex& v) {}) const {
-		std::vector<bool> visited(graphSize, false);
-
-		for (size_t i = 0; i < graphSize; i++)
-			BFS_rec(i, visited, visit);
-	}
-
-	void DFS(Vertex start, void (*visit)(Vertex& v) = [](Vertex& v) {}) {
-		std::vector<bool> visited(graphSize, false);
-		std::stack<Vertex> s;
-		s.push(start);
-
-		while (!s.empty()) {
-			Vertex cVert = s.top();
-			s.pop();
-
-			if (!visited[cVert]) {
-				visit(cVert);
-
-				for (const WeightedEdge& e : data[cVert])
-					s.push(e.edge.to);
-			}
-			visited[cVert] = true;
-		}
-
-	}
+	bool hasCycle() const;
 };
+
+void WeightedGraph::BFS_rec(Vertex from, std::vector<bool>& visited, void(*visit)(Vertex&)) const {
+	std::queue<Vertex> q;
+
+	q.push(from);
+
+	while (!q.empty()) {
+		Vertex curr = q.front();
+		q.pop();
+
+		if (!visited[curr]) {
+			for (const WeightedEdge& e : data[curr])
+				q.push(e.edge.to);
+			visit(curr);
+		}
+
+		visited[curr] = true;
+	}
+}
+
+bool WeightedGraph::containCycleRec(Vertex v, std::vector<bool>& stack, std::vector<bool>& visited) const {
+	visited[v] = true;
+	stack[v] = true;
+
+	for (const WeightedEdge& e : data[v])
+		if (stack[e.edge.to] || containCycleRec(e.edge.to, stack, visited))
+			return true;
+
+	stack[v] = false;
+	return false;
+}
+
+WeightedGraph::WeightedGraph(size_t n) {
+	graphSize = n;
+	data = std::vector<std::list<WeightedEdge>>(n, std::list<WeightedEdge>());
+}
+
+void WeightedGraph::addDirectedEdge(Vertex from, Vertex to, int w) {
+	if (from > graphSize || to > graphSize)
+		return;
+
+	data[from].push_back({ from, to, w });
+}
+
+void WeightedGraph::addEdge(Vertex from, Vertex to, int w) {
+	addDirectedEdge(from, to, w);
+	addDirectedEdge(to, from, w);
+}
+
+size_t WeightedGraph::size() const {
+	return graphSize;
+}
 
 std::optional<std::vector<int>> WeightedGraph::bellmanFord(Vertex from) const {
 	std::vector<int> result(size(), INT_MAX);
@@ -266,6 +251,66 @@ void WeightedGraph::dijkstraDemo() const {
 	std::cout << std::endl;
 }
 
+void WeightedGraph::BFS(Vertex from, void(*visit)(Vertex& v)) const {
+	std::vector<bool> visited(graphSize, false);
+
+	std::queue<Vertex> q;
+	q.push(from);
+
+	while (!q.empty()) {
+		Vertex curr = q.front();
+		q.pop();
+
+		if (!visited[curr]) {
+			for (const WeightedEdge& e : data[curr])
+				q.push(e.edge.to);
+			visit(curr);
+		}
+
+		visited[curr] = true;
+	}
+}
+
+void WeightedGraph::BFS(void(*visit)(Vertex& v)) const {
+	std::vector<bool> visited(graphSize, false);
+
+	for (size_t i = 0; i < graphSize; i++)
+		BFS_rec(i, visited, visit);
+}
+
+void WeightedGraph::DFS(Vertex start, void(*visit)(Vertex& v)) const {
+	std::vector<bool> visited(graphSize, false);
+	std::stack<Vertex> s;
+	s.push(start);
+
+	while (!s.empty()) {
+		Vertex cVert = s.top();
+		s.pop();
+
+		if (!visited[cVert]) {
+			visit(cVert);
+
+			for (const WeightedEdge& e : data[cVert])
+				s.push(e.edge.to);
+		}
+		visited[cVert] = true;
+	}
+}
+
+// If you have edges (0->1) && (1->0) this is still a cycle!
+// Should I fix it: maybe
+// Will I fix it: ¯\_(ツ)_/¯
+bool WeightedGraph::hasCycle() const {
+	std::vector<bool> visited(graphSize, false);
+	std::vector<bool> visitedWhileIterating(graphSize, false);
+
+	for (size_t i = 0; i < graphSize; i++)
+		if (!visited[i] && containCycleRec(i, visitedWhileIterating, visited))
+			return true;
+
+	return false;
+}
+
 int main() {
 	WeightedGraph g(8);
 
@@ -290,4 +335,8 @@ int main() {
 	g.BFS([](Vertex& v) {std::cout << v << " "; });
 	std::cout << std::endl;
 	g.DFS(0, [](Vertex& v) {std::cout << v << " "; });
+	std::cout << std::endl;
+	std::cout << g.hasCycle() << std::endl;			//0
+	g.addDirectedEdge(7, 1, 2);
+	std::cout << g.hasCycle() << std::endl;			//1
 }
