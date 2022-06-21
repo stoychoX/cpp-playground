@@ -3,6 +3,7 @@
 #include<list>
 #include<optional>
 #include<queue>
+#include<stack>
 
 using Vertex = unsigned int;
 
@@ -35,6 +36,25 @@ void relax(std::vector<size_t>& res, const WeightedEdge& e) {
 class WeightedGraph {
 	std::vector<std::list<WeightedEdge>> data;
 	size_t graphSize;
+
+	void BFS_rec(Vertex from, std::vector<bool>& visited, void (*visit)(Vertex&) = [](Vertex& v) {}) const {
+		std::queue<Vertex> q;
+
+		q.push(from);
+
+		while (!q.empty()) {
+			Vertex curr = q.front();
+			q.pop();
+
+			if (!visited[curr]) {
+				for (const WeightedEdge& e : data[curr])
+					q.push(e.edge.to);
+				visit(curr);
+			}
+
+			visited[curr] = true;
+		}
+	}
 public:
 	WeightedGraph(size_t n) {
 		graphSize = n;
@@ -56,11 +76,9 @@ public:
 	size_t size() const {
 		return graphSize;
 	}
-
+	
 	std::optional<std::vector<int>> bellmanFord(Vertex from) const;
-
 	std::vector<std::vector<int>> floydWarshall() const;
-
 	std::vector<size_t> dijkstra(Vertex start) const;
 
 	bool canBeRelaxed(const std::vector<int>& res, const WeightedEdge& e) const;
@@ -69,6 +87,52 @@ public:
 	void floydWarshallDemo() const;
 	void bellmanFordDemo() const;
 	void dijkstraDemo() const;
+
+	void BFS(Vertex from, void (*visit)(Vertex& v) = [](Vertex& v) {}) const {
+		std::vector<bool> visited(graphSize, false);
+
+		std::queue<Vertex> q;
+		q.push(from);
+
+		while (!q.empty()) {
+			Vertex curr = q.front();
+			q.pop();
+
+			if (!visited[curr]) {
+				for (const WeightedEdge& e : data[curr])
+					q.push(e.edge.to);
+				visit(curr);
+			}
+			
+			visited[curr] = true;
+		}
+	}
+	void BFS(void (*visit)(Vertex& v) = [](Vertex& v) {}) const {
+		std::vector<bool> visited(graphSize, false);
+
+		for (size_t i = 0; i < graphSize; i++)
+			BFS_rec(i, visited, visit);
+	}
+
+	void DFS(Vertex start, void (*visit)(Vertex& v) = [](Vertex& v) {}) {
+		std::vector<bool> visited(graphSize, false);
+		std::stack<Vertex> s;
+		s.push(start);
+
+		while (!s.empty()) {
+			Vertex cVert = s.top();
+			s.pop();
+
+			if (!visited[cVert]) {
+				visit(cVert);
+
+				for (const WeightedEdge& e : data[cVert])
+					s.push(e.edge.to);
+			}
+			visited[cVert] = true;
+		}
+
+	}
 };
 
 std::optional<std::vector<int>> WeightedGraph::bellmanFord(Vertex from) const {
@@ -171,7 +235,7 @@ void WeightedGraph::floydWarshallDemo() const {
 		}
 		std::cout << std::endl;
 	}
-	std::cout << std::endl;
+	std::wcout << std::endl;
 }
 
 void WeightedGraph::bellmanFordDemo() const {
@@ -222,4 +286,8 @@ int main() {
 	g.floydWarshallDemo();
 	g.bellmanFordDemo();
 	g.dijkstraDemo();
+
+	g.BFS([](Vertex& v) {std::cout << v << " "; });
+	std::cout << std::endl;
+	g.DFS(0, [](Vertex& v) {std::cout << v << " "; });
 }
