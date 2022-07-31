@@ -47,13 +47,13 @@ private:
 
 		size_t idx = powerOfTwoToIndex(intrervalLen);
 
-		size_t l = sparse.indexes[idx][leftChunkPos + 1];
+		size_t l = sparse.indexAt(idx, leftChunkPos + 1);
 
 		// Гаден корнър кейс
 		if (rigthChunkPos - leftChunkPos - 1 == intrervalLen)
 			return l;
 
-		size_t r = sparse.indexes[idx][rigthChunkPos - intrervalLen];
+		size_t r = sparse.indexAt(idx, rigthChunkPos - intrervalLen);
 
 		return ((*data)[l] < (*data)[r]) ? l : r;
 	}
@@ -86,7 +86,7 @@ public:
 		data = &init;
 	}
 
-	unsigned min(size_t left, size_t right) const {
+	size_t min(size_t left, size_t right) const {
 		assert(left < RMQ01Data.occurances.size() &&
 			right < RMQ01Data.occurances.size());
 

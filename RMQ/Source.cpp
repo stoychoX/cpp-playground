@@ -82,7 +82,7 @@ void test(size_t length) {
 		}
 	}
 
-	std::cout << "Done! " << seed;
+	std::cout << "Passed with seed: " << seed;
 }
 
 int main() {
@@ -90,5 +90,10 @@ int main() {
 		std::cout << i << std::endl;
 		me(i);
 		// stl(i);
+	}
+
+	for (size_t i = (1 << 4); i <= (1 << 10); i <<= 1) {
+		test(i);
+		std::cout << std::endl;
 	}
 }

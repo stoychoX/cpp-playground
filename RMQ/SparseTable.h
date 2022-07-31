@@ -3,12 +3,10 @@
 
 #include"ChunkCollection.h"
 
-
 class SparseTable {
 	// indexes[k][i] -> Индексът на минимума в i-ти интервал с дължина 2^(k+1)
-public:				// оправи това
 	std::vector<std::vector<unsigned>> indexes;
-
+public:
 	SparseTable() {}
 
 	template<class T>
@@ -42,6 +40,11 @@ public:				// оправи това
 			++at;
 		}
 	}
+
+	size_t indexAt(size_t powerOfTwo, size_t intervalStart) const{
+		return indexes[powerOfTwo][intervalStart];
+	}
+
 };
 
 #endif // !SPARSE_TABLE_H

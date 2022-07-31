@@ -4,9 +4,9 @@
 #include<cassert>
 
 class BitChunk {
-	size_t chunkSize;
 	// Триъгълна таблица
 	std::vector<std::vector<int>> data;
+	size_t chunkSize;
 	bool isValid;
 public:
 	BitChunk(size_t s) : chunkSize(s), isValid(false) {};

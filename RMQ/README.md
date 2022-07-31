@@ -9,3 +9,4 @@ https://www.youtube.com/watch?v=0rCFkuQS968
 
 In the example we use GCC compiler, even though MSVC compiler results in release mode are't so different.
 We have 8 GB of RAM and run on intel CORE i5 10th gen.
+
