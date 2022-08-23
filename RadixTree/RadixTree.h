@@ -86,13 +86,13 @@ private:
 		return toReturn;
 	}
 
-	static bool isInvalidPrefix(size_t prefix, Node* current) {
+	static bool isInvalidPrefix(size_t prefix, const Node* current) {
 		return
 			(prefix != current->word.size()) &&	// Префикса е по къс от самата дума. Тогава не можем да продължим.
 			!((prefix == current->word.size() - 1) && current->word.back() == TERMINAL_SYMBOL);	// Понеже слагаме $ в края на думите без деца трябва да хванем този corner case
 	}
 
-	static bool isValidPrefix(size_t prefix, const std::string& arg, Node* current) {
+	static bool isValidPrefix(size_t prefix, const std::string& arg, const Node* current) {
 		return prefix == arg.size() &&
 			(prefix == current->word.size() ||
 				(prefix == current->word.size() - 1 && current->word.back() == TERMINAL_SYMBOL));
@@ -177,7 +177,7 @@ private:
 		return border;
 	}
 public:
-	RadixTree() { root = new Node; }
+	RadixTree() {}
 
 	void insert(std::string arg);
 
@@ -185,11 +185,11 @@ public:
 
 	bool remove(std::string arg);
 
-	~RadixTree() { delete root; }
+	~RadixTree() {}
 
 	friend class RadixTreeTester;
 private:
-	Node* root;
+	Node root;
 };
 
 #endif // !RADIX_TREE_HEADER
@@ -197,12 +197,12 @@ private:
 template<AlphabetType alphabet>
 void RadixTree<alphabet>::insert(std::string arg) {
 	if (arg.empty()) {
-		root->markAsEnd();
+		root.markAsEnd();
 		return;
 	}
 
 	size_t idx = getIndex(arg[0]);
-	Node* current = root;
+	Node* current = &root;
 
 	while (current->data[idx]) {
 		current = current->data[idx];
@@ -233,10 +233,10 @@ void RadixTree<alphabet>::insert(std::string arg) {
 template<AlphabetType alphabet>
 bool RadixTree<alphabet>::search(std::string arg) const {
 	if (arg.empty())
-		return root->isWordEnd();
+		return root.isWordEnd();
 
 	size_t idx = getIndex(arg[0]);
-	Node* current = root;
+	const Node* current = &root;
 
 	while (current->data[idx]) {
 		current = current->data[idx];
@@ -258,13 +258,13 @@ bool RadixTree<alphabet>::search(std::string arg) const {
 template<AlphabetType alphabet>
 bool RadixTree<alphabet>::remove(std::string arg) {
 	if (arg.empty()) {
-		bool toReturn = root->isWordEnd();
-		root->unmarkAsEnd();
+		bool toReturn = root.isWordEnd();
+		root.unmarkAsEnd();
 		return toReturn;
 	}
 
-	Node* current = root;
-	Node* parent = root;
+	Node* current = &root;
+	Node* parent = &root;
 	size_t idx = getIndex(arg[0]);
 
 	while (current->data[idx] && !arg.empty()) {

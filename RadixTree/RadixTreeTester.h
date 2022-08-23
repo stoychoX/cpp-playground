@@ -20,7 +20,7 @@ private:
 			trie.insert(str);
 		}
 		std::cout << "Loading finished. Start checking children count..\n";
-		recChildrenTest(trie.root);
+		recChildrenTest(&trie.root);
 		std::cout << "Count check finished\n";
 	}
 
@@ -113,7 +113,7 @@ private:
 			assert(trie.remove(v[i]));
 			assert(!trie.remove(v[i]));
 			assert(!trie.search(v[i]));
-			recChildrenTest(trie.root);
+			recChildrenTest(&trie.root);
 		}
 	}
 public:
