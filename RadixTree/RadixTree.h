@@ -6,6 +6,7 @@
 #include<string>
 #include<cassert>
 #include<array>
+#include<algorithm>
 
 enum class AlphabetType {
 	OnlyLowerCase = 26 + 1,				// [a-z] + <TERMINAL_SYMBOL>
@@ -78,7 +79,7 @@ private:
 			toReturn = (size_t)(c);
 			break;
 		case AlphabetType::ALL:
-			toReturn = 128 + (size_t)(c);
+			toReturn = 128 + (int)(c);
 			break;
 		}
 
