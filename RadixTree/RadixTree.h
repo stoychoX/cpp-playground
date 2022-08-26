@@ -183,6 +183,10 @@ public:
 
 	bool search(std::string arg) const;
 
+	RadixTree(const RadixTree<alphabet>&) = delete;
+
+	RadixTree& operator=(const RadixTree<alphabet>&) = delete;
+
 	bool remove(std::string arg);
 
 	~RadixTree() {}
