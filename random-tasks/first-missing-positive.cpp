@@ -1,4 +1,4 @@
-// leetcode task to find the least positive number not contained in array
+// leetcode task to find the least positive number not contained in array in O(n) time & O(1) memory
 #include<utility>
 #include<vector>
 #include<iostream>
