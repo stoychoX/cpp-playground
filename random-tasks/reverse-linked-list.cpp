@@ -70,7 +70,7 @@ void reverseListHelper(LinkedListNode* ll, LinkedListNode*& last, LinkedListNode
 		return;
 	}
 	reverseListHelper(ll->next, last, result);
-	
+
 	ll->next = nullptr;
 	last->next = ll;
 	last = last->next;
@@ -87,15 +87,30 @@ void reverseList(LinkedListNode*& ll) {
 	ll = result;
 }
 
+// reverse list with O(1) additional memory (iterative)
+void reverseListIter(LinkedListNode*& ll) {
+	LinkedListNode* current = ll;
+	LinkedListNode* prev = nullptr;
+	LinkedListNode* next = nullptr;
+
+	while (current) {
+		next = current->next;
+		current->next = prev;
+		prev = current;
+		current = next;
+	}
+	ll = prev;
+}
+
 int main() {
-	LinkedListNode* example = init({ 6, 9, 14, 4, 1, 12, 9, 6, 5, 2, 18, 15 });
+	LinkedListNode* example = init({ 1, 2, 3, 4, 5, 6, 7, 8, 9 });
 	std::cout << "Original list: " << std::endl;
 	printNode(example);
 	LinkedListNode* reversed = reverse(example);
-	reverseList(example);
+	reverseListIter(example);
 	printNode(example);
 	printNode(reversed);
-	
+
 	freeNode(example);
 	freeNode(reversed);
 }
