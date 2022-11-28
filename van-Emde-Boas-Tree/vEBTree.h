@@ -277,6 +277,9 @@ private:
 public:
 	vEBTree(num_t u);
 
+	vEBTree(const vEBTree&) = delete;
+	vEBTree& operator=(const vEBTree&) = delete;
+
 	void insert(num_t x);
 
 	void remove(num_t x);

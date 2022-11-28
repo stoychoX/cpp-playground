@@ -1,9 +1,13 @@
 ﻿#include<iostream>
-#include<vector>
-#include<bit>
 #include<cassert>
 #include<algorithm>
 #include"vEBTree.h"
+
+/*
+g++ -std=c++20 -O0 .\tests.cpp .\vEBTree.cpp 
+
+Or enable c++20 on visual studio.
+*/
 
 void tests() {
 	auto size = 1LL << 20;
