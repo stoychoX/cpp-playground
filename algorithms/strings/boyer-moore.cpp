@@ -60,19 +60,6 @@ void initPattern(const std::string& str, pattern& arg) {
 	initGoodSuffix(str, arg.goodSuffix);
 }
 
-void printTables(const pattern& arg) {
-	std::cout << "Bad char: " << std::endl; 
-	for(auto x : arg.badChar)
-		std::cout << x << " ";
-
-	std::cout << std::endl;
-	std::cout << "Good suffix: " << std::endl; 
-
-	for(auto x : arg.goodSuffix)
-		std::cout << x << " ";
-	std::cout << std::endl;
-}
-
 void search(const std::string& str, const pattern& arg) {
 	int indexPosition = arg.pat.size() - 1;
 
