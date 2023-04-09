@@ -3,23 +3,39 @@
 #include<map>
 
 int lengthOfLongestSubstring(const std::string& s) {
-    std::map<char, int> m;
-    size_t globalMax = 0;
-    int beg = 0;
+        std::map<char, size_t> lastPos;
+        size_t pos = 0;
+        size_t ans = 0;
 
-    for(int i = 0; i < s.size(); ++i) {
-        if(m[s[i]] > 0) {
-            if(m.size() > globalMax)
-                globalMax = m.size();
-            
-            while(m[s[i]] > 0)
-                m.erase(s[beg++]);
+        bool metDuplicate = false;
+
+        for (size_t i = 0; i < s.length(); i++) {
+            bool contains = !(lastPos.count(s[i]) == 0);
+
+            size_t lastPosOfChar = lastPos[s[i]];
+
+            if (contains && lastPosOfChar >= pos) {
+                if (!metDuplicate) {
+                    ans = i;
+                    metDuplicate = true;
+                }
+
+                ans = std::max(ans, i - pos);
+                pos = lastPosOfChar + 1;
+            }
+
+            lastPos[s[i]] = i;
+
         }
-        m[s[i]] = 1;
+
+        ans = std::max(ans, s.length() - pos);
+
+        if (metDuplicate == false) {
+            return s.length();
+        }
+
+        return ans;
     }
-    
-    return std::max(m.size(), globalMax);
-}
 
 int main() {
     std::cout << lengthOfLongestSubstring("dvdf");
